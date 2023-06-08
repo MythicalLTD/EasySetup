@@ -4,10 +4,8 @@ if [[ $EUID -ne 0 ]]; then
   echo "* This script must be executed with root privileges (sudo)." 1>&2
   exit 1
 fi
-echo "      Welcome to AtoroTech Script"
-echo "With this script you can setup your oracle"
-echo "   loud server to install our products"
-echo "       Copyright 2023 AtoroTech"
+echo "    Welcome to MythicalSystems Script"
+echo "With this script you can setup your vps"
 read -p "Press any key to start installing ..."
 cd /etc/ssh
 rm sshd_config
