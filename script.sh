@@ -18,6 +18,7 @@ sudo passwd
 echo "Done, keep in mind that now you will have to ssh to your server using your serverip@root and not serverip@ubuntu"
 echo "And use the password you typed in early"
 read -p "Press any key to continue with installing updates"
+sudo apt install neofetch -y
 sudo apt update
 sudo apt -y upgrade
 echo "We are done with installing updates, press any key, so we can set up your firewall!"
