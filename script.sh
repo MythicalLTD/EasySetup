@@ -7,12 +7,6 @@ fi
 echo "    Welcome to MythicalSystems Script"
 echo "With this script you can setup your vps"
 read -p "Press any key to start installing ..."
-cd /etc/ssh
-rm sshd_config
-curl -o sshd_config https://raw.githubusercontent.com/MythicalLTD/EasySetup/main/Files/sshd_config
-systemctl restart ssh
-systemctl restart sshd
-echo "We enabled root login and password auth"
 echo "Let's set up a password for the root user!"
 sudo passwd
 echo "Done, keep in mind that now you will have to ssh to your server using your serverip@root and not serverip@ubuntu"
