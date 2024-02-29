@@ -46,7 +46,7 @@ GRUB_CMDLINE_LINUX_DEFAULT="swapaccount=1"
 echo "[mysqld]" >> /etc/mysql/my.cnf
 echo "bind-address = '0.0.0.0'" >> /etc/mysql/my.cnf
 echo "default_time_zone = '+01:00'" >> /etc/mysql/my.cnf
-sudo sed -i 's/^bind-address.*$/ind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
+sudo sed -i 's/^bind-address.*$/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo sed -i '/^collation-server/s/^/#/g' /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo sed -i '/^#collation-server/a collation-server = utf8mb4_general_ci' /etc/mysql/mariadb.conf.d/50-server.cnf
 
