@@ -25,6 +25,26 @@ prompt_password() {
     read -s -p "Enter password for $1: " password
     echo "$password"
 }
+
+echo "Select your timezone:"
+echo "1. Europe/Vienna"
+echo "2. Your Custom Timezone"
+
+read -p "Enter your choice [1 or 2]: " timezone_choice
+case $timezone_choice in
+    1)
+        timezone="Europe/Vienna"
+        ;;
+    2)
+        read -p "Enter your custom timezone (e.g., America/New_York): " custom_timezone
+        timezone="$custom_timezone"
+        ;;
+    *)
+        echo "Invalid choice. Setting timezone to default (Europe/Vienna)."
+        timezone="Europe/Vienna"
+        ;;
+esac
+
 # Install updates
 sudo apt update -y
 sudo apt -y upgrade
@@ -57,16 +77,26 @@ sudo systemctl enable --now redis-server
 
 sudo apt install -y certbot python3-certbot-nginx
 
+type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+&& sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+&& sudo apt update \
+&& sudo apt install gh -y
+
 # Docker and shit
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash
 # Enable docker 
 sudo systemctl enable --now docker
 GRUB_CMDLINE_LINUX_DEFAULT="swapaccount=1"
 
+sudo apt update
+sudo apt install gh
+
 # Setup mysql and shit
 echo "[mysqld]" >> /etc/mysql/my.cnf
 echo "bind-address = '0.0.0.0'" >> /etc/mysql/my.cnf
-echo "default_time_zone = '+01:00'" >> /etc/mysql/my.cnf
+echo "default_time_zone = '$timezone'" >> /etc/mysql/my.cnf
 sudo sed -i 's/^bind-address.*$/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo sed -i '/^collation-server/s/^/#/g' /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo sed -i '/^#collation-server/a collation-server = utf8mb4_general_ci' /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -89,7 +119,7 @@ mariadb -u root -e "CREATE USER '$username'@'%' IDENTIFIED BY '$mysql_password';
 # redis-cli -u redis://nayskutzu:margareta28@127.0.0.1:6379
 
 # Set the right timezone for the system
-sudo timedatectl set-timezone Europe/Vienna
+sudo timedatectl set-timezone "$timezone"
 timedatectl
 
 wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
@@ -117,7 +147,7 @@ swapon /swapfile2
 
 # Configure php
 sed -i 's/memory_limit = 128M/memory_limit = 2G/' /etc/php/8.2/fpm/php.ini
-sed -i 's/;date.timezone =/date.timezone = Europe\/Vienna/' /etc/php/8.2/fpm/php.ini
+sed -i 's/;date.timezone =/date.timezone = '$timezone'/' /etc/php/8.2/fpm/php.ini
 sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/8.2/fpm/php.ini
 sed -i 's/display_errors = .*/display_errors = Off/' /etc/php/8.2/fpm/php.ini
 sed -i '/^;zend_extension=opcache/s/^;//' /etc/php/8.2/fpm/php.ini
@@ -168,6 +198,8 @@ if [ "$webserver_option" == "no" ]; then
 else
     echo "Okay big boss!"
 fi
+sudo apt update -y
+sudo apt upgrade -y
 
 echo "------------------------------------------"
 echo ""
