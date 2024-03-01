@@ -12,9 +12,11 @@ if [ -f /etc/os-release ]; then
         echo "This is Debian 12."
     else
         echo "This is not Debian 12."
+        exit 1
     fi
 else
     echo "Cannot determine OS version. /etc/os-release file not found."
+    exit 1
 fi
 
 generate_password() {
@@ -25,6 +27,18 @@ prompt_password() {
     read -s -p "Enter password for $1: " password
     echo "$password"
 }
+echo "!! Warrning !! !! Warrning !!"
+echo "!! Warrning !! !! Warrning !!"
+echo "!! Warrning !! !! Warrning !!"
+echo ""
+echo "This script hast to be executed on a clean vps and on a fresh"
+echo "installed version of debian 12 with nothing extra installed!"
+echo ""
+read -p "Press any key to start installing ..."
+echo ""
+echo "!! Warrning !! !! Warrning !!"
+echo "!! Warrning !! !! Warrning !!"
+echo "!! Warrning !! !! Warrning !!"
 
 echo "Select your timezone:"
 echo "1. Europe/Vienna"
@@ -147,7 +161,7 @@ swapon /swapfile2
 
 # Configure php
 sed -i 's/memory_limit = 128M/memory_limit = 2G/' /etc/php/8.2/fpm/php.ini
-sed -i 's/;date.timezone =/date.timezone = '"$timezone"'/' /etc/php/8.2/fpm/php.ini
+sed -i 's/;date.timezone =/date.timezone = '"${timezone//\//\\/}"'/' /etc/php/8.2/fpm/php.ini
 sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/8.2/fpm/php.ini
 sed -i 's/display_errors = .*/display_errors = Off/' /etc/php/8.2/fpm/php.ini
 sed -i '/^;zend_extension=opcache/s/^;//' /etc/php/8.2/fpm/php.ini
