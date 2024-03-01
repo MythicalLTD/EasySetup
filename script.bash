@@ -5,6 +5,18 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
+
+if [ -f /etc/os-release ]; then
+    version_id=$(grep -oP '(?<=VERSION_ID=")[^"]*' /etc/os-release)
+    if [ "$version_id" = "12" ]; then
+        echo "This is Debian 12."
+    else
+        echo "This is not Debian 12."
+    fi
+else
+    echo "Cannot determine OS version. /etc/os-release file not found."
+fi
+
 generate_password() {
     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-12} | head -n 1
 }
@@ -18,7 +30,7 @@ sudo apt update -y
 sudo apt -y upgrade
 
 # Install necessary packages
-apt -y install software-properties-common curl ca-certificates gnupg2 sudo lsb-release
+apt -y install software-properties-common curl ca-certificates gnupg2 sudo lsb-release wget
 
 # Add repository for PHP
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/sury-php.list
@@ -40,7 +52,7 @@ apt install -y php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,z
 curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
 
 # Install the rest of dependencies
-apt install -y mariadb-server nginx tar unzip git redis-server dos2unix htop btop zip
+apt install -y mariadb-server nginx tar unzip git redis-server dos2unix htop btop zip neofetch net-tools
 sudo systemctl enable --now redis-server
 
 sudo apt install -y certbot python3-certbot-nginx
@@ -130,6 +142,21 @@ sudo chmod -x /etc/update-motd.d/*
 cd ~/ 
 rm .bashrc
 curl -o .bashrc https://raw.githubusercontent.com/MythicalLTD/EasySetup/main/Files/.bashrc
+
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+nvm install 20
+nvm install 18
+
+sudo apt install python3 python3-pip python3-full -y
+
+wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+rm go1.22.0.linux-amd64.tar.gz
 
 read -p "Do you want to use this server as a webserver? (yes/no): " webserver_option
 if [ "$webserver_option" == "no" ]; then
