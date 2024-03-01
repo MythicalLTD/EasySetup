@@ -147,7 +147,7 @@ swapon /swapfile2
 
 # Configure php
 sed -i 's/memory_limit = 128M/memory_limit = 2G/' /etc/php/8.2/fpm/php.ini
-sed -i 's/;date.timezone =/date.timezone = '$timezone'/' /etc/php/8.2/fpm/php.ini
+sed -i 's/;date.timezone =/date.timezone = '"$timezone"'/' /etc/php/8.2/fpm/php.ini
 sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/8.2/fpm/php.ini
 sed -i 's/display_errors = .*/display_errors = Off/' /etc/php/8.2/fpm/php.ini
 sed -i '/^;zend_extension=opcache/s/^;//' /etc/php/8.2/fpm/php.ini
