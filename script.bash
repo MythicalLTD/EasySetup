@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 if [[ $EUID -ne 0 ]]; then
+  clear
   echo "* This script must be executed with root privileges (sudo)." 1>&2
   exit 1
 fi
@@ -9,12 +10,15 @@ fi
 if [ -f /etc/os-release ]; then
     version_id=$(grep -oP '(?<=VERSION_ID=")[^"]*' /etc/os-release)
     if [ "$version_id" = "12" ]; then
+        clear
         echo "This is Debian 12."
     else
+        clear
         echo "This is not Debian 12."
         exit 1
     fi
 else
+    clear
     echo "Cannot determine OS version. /etc/os-release file not found."
     exit 1
 fi
@@ -27,6 +31,7 @@ prompt_password() {
     read -s -p "Enter password for $1: " password
     echo "$password"
 }
+clear
 echo "!! Warrning !! !! Warrning !!"
 echo "!! Warrning !! !! Warrning !!"
 echo "!! Warrning !! !! Warrning !!"
@@ -40,6 +45,7 @@ echo "!! Warrning !! !! Warrning !!"
 echo "!! Warrning !! !! Warrning !!"
 echo "!! Warrning !! !! Warrning !!"
 
+clear
 echo "Select your timezone:"
 echo "1. Europe/Vienna"
 echo "2. Your Custom Timezone"
@@ -47,13 +53,16 @@ echo "2. Your Custom Timezone"
 read -p "Enter your choice [1 or 2]: " timezone_choice
 case $timezone_choice in
     1)
+        clear
         timezone="Europe/Vienna"
         ;;
     2)
+        clear
         read -p "Enter your custom timezone (e.g., America/New_York): " custom_timezone
         timezone="$custom_timezone"
         ;;
     *)
+        clear
         echo "Invalid choice. Setting timezone to default (Europe/Vienna)."
         timezone="Europe/Vienna"
         ;;
@@ -214,7 +223,7 @@ else
 fi
 sudo apt update -y
 sudo apt upgrade -y
-
+clear
 echo "------------------------------------------"
 echo ""
 echo "           Your server is ready!"
