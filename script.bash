@@ -109,6 +109,7 @@ curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo 
 
 # Docker and shit
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash
+
 # Enable docker 
 sudo systemctl enable --now docker
 GRUB_CMDLINE_LINUX_DEFAULT="swapaccount=1"
@@ -138,8 +139,6 @@ echo "ACL SETUSER $username on >$redis_password allcommands on" | redis-cli
 
 # Set up MySQL/MariaDB user and password
 mariadb -u root -e "CREATE USER '$username'@'%' IDENTIFIED BY '$mysql_password'; GRANT ALL PRIVILEGES ON *.* TO '$username'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-
-# redis-cli -u redis://nayskutzu:margareta28@127.0.0.1:6379
 
 # Set the right timezone for the system
 sudo timedatectl set-timezone "$timezone"
