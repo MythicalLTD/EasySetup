@@ -202,8 +202,11 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 
 nvm install 20
 nvm install 18
-
+# Python3
 sudo apt install python3 python3-pip python3-full -y
+
+# Install docker compose
+apt install docker-compose -y 
 
 wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
 rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
